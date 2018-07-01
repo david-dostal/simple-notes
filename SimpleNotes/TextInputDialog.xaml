@@ -1,0 +1,24 @@
+﻿<Window x:Class="SimpleNotes.TextInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleNotes"
+        mc:Ignorable="d"
+        Title="Add note" Width="309" SizeToContent="Height" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        FontSize="14"
+        FocusManager.FocusedElement="{Binding ElementName=noteNameTbx}">
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Name your note" HorizontalAlignment="Left" Margin="0,4,4,4" VerticalAlignment="Top" Height="26"/>
+        <TextBox x:Name="noteNameTbx" Height="23" Margin="4" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="0"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Grid.Row="2" VerticalAlignment="Top">
+            <local:FiButton x:Name="okBtn" IsDefault="True" Content="OK" Margin="4" Padding="12 0" MinHeight="28" MinWidth="72" Click="okBtn_Click"/>
+            <local:FiButton IsCancel="True" Content="Cancel" Margin="4" Padding="12 0" MinHeight="28" MinWidth="72"/>
+        </StackPanel>
+    </Grid>
+</Window>
