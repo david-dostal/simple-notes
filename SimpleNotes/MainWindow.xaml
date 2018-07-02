@@ -8,6 +8,17 @@
         mc:Ignorable="d"
         Title="SimpleNotes" Height="400" Width="600" WindowStartupLocation="CenterScreen" MinWidth="222" MinHeight="200"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing">
+    <Window.Resources>
+        <RoutedUICommand x:Key="SaveAllCommand" Text="Save all">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Shift+S</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource SaveAllCommand}" Executed="SaveAllCommandExecuted" />
+        <CommandBinding Command="Save" Executed="SaveCommandExecuted" />
+    </Window.CommandBindings>
     <Grid>
         <DockPanel LastChildFill="True">
             <Menu MinHeight="24" DockPanel.Dock="Top" FontSize="14">
@@ -21,7 +32,7 @@
                     <MenuItem Header="_Choose folder..." />
                     <Separator />
                     <MenuItem Command="Save" />
-                    <MenuItem Header="_Save all" Click="SaveNotesClick" />
+                    <MenuItem Header="_Save all" Command="{StaticResource SaveAllCommand}" />
                 </MenuItem>
                 <MenuItem Header="_Edit">
                     <MenuItem Header="_Rename..." />
@@ -33,7 +44,7 @@
                 </MenuItem>
                 <MenuItem Header="_Add note..." Click="AddNoteClick"/>
             </Menu>
-            <TabControl
+            <TabControl x:Name="notesTabControl"
                 ItemsSource="{Binding Notes, FallbackValue=None}"
                 Padding="0" BorderThickness="0">
                 <TabControl.ItemTemplate>

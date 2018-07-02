@@ -6,6 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+using System.Windows.Input;
 
 namespace SimpleNotes
 {
@@ -38,10 +39,7 @@ namespace SimpleNotes
             hashes.Clear();
             foreach (Note note in Notes)
             {
-                string path = Path.Combine(NotesFolder, note.Name + ".txt");
-                using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
-                    writer.Write(note.Text);
-                hashes.Add(note, ComputeHash(note));
+                SaveNote(note);
             }
         }
 
@@ -86,6 +84,29 @@ namespace SimpleNotes
                     return false;
             }
             return true;
+        }
+
+        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNotes();
+        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNote();
+
+        private void SaveNote(Note note)
+        {
+            string path = Path.Combine(NotesFolder, note.Name + ".txt");
+            using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
+                writer.Write(note.Text);
+            // saving old note
+            if (hashes.ContainsKey(note))
+                hashes[note] = ComputeHash(note);
+            // saving new note
+            else
+                hashes.Add(note, ComputeHash(note));
+        }
+
+        private void SaveNote()
+        {
+            if (notesTabControl.SelectedItem == null) return;
+            Note note = notesTabControl.SelectedItem as Note;
+            SaveNote(note);
         }
     }
 }
