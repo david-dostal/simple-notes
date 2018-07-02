@@ -2,11 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Markup;
 
 namespace SimpleNotes
 {
@@ -19,8 +22,21 @@ namespace SimpleNotes
 
         public MainWindow()
         {
+            TrySettingCulture();
             InitializeComponent();
             LoadNotes();
+        }
+
+        private void TrySettingCulture()
+        {
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+                LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
+                    new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
+            }
+            catch (CultureNotFoundException) { } // Stick with default culture if not present on system
         }
 
         private void LoadNotes()
@@ -33,14 +49,33 @@ namespace SimpleNotes
             }
         }
 
-        private void SaveNotesClick(object sender, RoutedEventArgs e) => SaveNotes();
+        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNotes();
         private void SaveNotes()
         {
             hashes.Clear();
             foreach (Note note in Notes)
-            {
                 SaveNote(note);
-            }
+        }
+
+        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNote();
+        private void SaveNote(Note note)
+        {
+            string path = Path.Combine(NotesFolder, note.Name + ".txt");
+            using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
+                writer.Write(note.Text);
+            // saving old note
+            if (hashes.ContainsKey(note))
+                hashes[note] = ComputeHash(note);
+            // saving new note
+            else
+                hashes.Add(note, ComputeHash(note));
+        }
+
+        private void SaveNote()
+        {
+            if (notesTabControl.SelectedItem == null) return;
+            Note note = notesTabControl.SelectedItem as Note;
+            SaveNote(note);
         }
 
         private void AddNoteClick(object sender, RoutedEventArgs e)
@@ -84,29 +119,6 @@ namespace SimpleNotes
                     return false;
             }
             return true;
-        }
-
-        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNotes();
-        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNote();
-
-        private void SaveNote(Note note)
-        {
-            string path = Path.Combine(NotesFolder, note.Name + ".txt");
-            using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
-                writer.Write(note.Text);
-            // saving old note
-            if (hashes.ContainsKey(note))
-                hashes[note] = ComputeHash(note);
-            // saving new note
-            else
-                hashes.Add(note, ComputeHash(note));
-        }
-
-        private void SaveNote()
-        {
-            if (notesTabControl.SelectedItem == null) return;
-            Note note = notesTabControl.SelectedItem as Note;
-            SaveNote(note);
         }
     }
 }
