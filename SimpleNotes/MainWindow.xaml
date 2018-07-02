@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleNotes"
+        xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
         mc:Ignorable="d"
         Title="SimpleNotes" Height="400" Width="600" WindowStartupLocation="CenterScreen" MinWidth="222" MinHeight="200"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing">
@@ -27,7 +28,7 @@
                     <MenuItem Header="_Delete" />
                 </MenuItem>
                 <MenuItem Header="_View">
-                    <MenuItem Header="_Wrap lines" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" />
+                    <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" />
                     <MenuItem Header="_Font..." />
                 </MenuItem>
                 <MenuItem Header="_Add note..." Click="AddNoteClick"/>
@@ -42,12 +43,14 @@
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
                     <DataTemplate>
-                        <TextBox
+                        <_:TextBox
                             Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=Lorem ipsum dolor sit amet}"
                             Padding="4"
-                            TextWrapping="Wrap"
                             AcceptsReturn="True"
-                            VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="18"/>
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Auto"
+                            FontFamily="Consolas" FontSize="18"
+                            TextWrapping="Wrap" />
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>

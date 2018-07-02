@@ -25,15 +25,24 @@ namespace SimpleNotes
         private void LoadNotes()
         {
             foreach (string notePath in Directory.EnumerateFiles(NotesFolder, "*.txt", SearchOption.TopDirectoryOnly))
-                AddNote(new Note(Path.GetFileNameWithoutExtension(notePath), File.ReadAllText(notePath, Encoding.Default)));
+            {
+                Note note = new Note(Path.GetFileNameWithoutExtension(notePath), File.ReadAllText(notePath, Encoding.UTF8));
+                Notes.Add(note);
+                hashes.Add(note, ComputeHash(note));
+            }
         }
 
         private void SaveNotesClick(object sender, RoutedEventArgs e) => SaveNotes();
         private void SaveNotes()
         {
-            throw new NotImplementedException();
-            // save note
-            // compute new hashes
+            hashes.Clear();
+            foreach (Note note in Notes)
+            {
+                string path = Path.Combine(NotesFolder, note.Name + ".txt");
+                using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
+                    writer.Write(note.Text);
+                hashes.Add(note, ComputeHash(note));
+            }
         }
 
         private void AddNoteClick(object sender, RoutedEventArgs e)
@@ -41,13 +50,7 @@ namespace SimpleNotes
             TextInputDialog dialog = new TextInputDialog();
             dialog.Owner = this;
             if (dialog.ShowDialog() == true)
-                AddNote(new Note(dialog.Text));
-        }
-
-        private void AddNote(Note note)
-        {
-            Notes.Add(note);
-            hashes.Add(note, ComputeHash(note));
+                Notes.Add(new Note(dialog.Text));
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -62,14 +65,14 @@ namespace SimpleNotes
             }
         }
 
-        protected virtual string ComputeHash(Note note)
+        private string ComputeHash(Note note)
         {
             HashAlgorithm hasher = MD5.Create();
             byte[] hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(note.Text + note.Name));
             return BitConverter.ToString(hash);
         }
 
-        protected virtual bool IsSaved()
+        private bool IsSaved()
         {
             if (Notes.Count != hashes.Count)
                 return false;
