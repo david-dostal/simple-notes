@@ -50,7 +50,7 @@
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Auto"
                             FontFamily="Consolas" FontSize="18"
-                            TextWrapping="Wrap" />
+                            TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}" />
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>

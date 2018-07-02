@@ -2,8 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SimpleNotes"
+             xmlns:converters="clr-namespace:SimpleNotes.Converters"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <converters:BooleanToTextWrappingConverter x:Key="BooleanToTextWrappingConverter"/>
     </Application.Resources>
 </Application>
