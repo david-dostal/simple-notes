@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FileSystem = Microsoft.VisualBasic.FileIO.FileSystem;
+using UIOption = Microsoft.VisualBasic.FileIO.UIOption;
+using RecycleOption = Microsoft.VisualBasic.FileIO.RecycleOption;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -39,7 +42,7 @@ namespace SimpleNotes.ViewModels
                 throw new ArgumentException("Cannot delete note that doesn't exist.");
             string path = Path.Combine(Directory, $"{note.Name}.txt");
             if (File.Exists(path))
-                File.Delete(path);
+                FileSystem.DeleteFile(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             Notes.Remove(note);
         }
 
