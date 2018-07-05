@@ -1,6 +1,6 @@
 ﻿using SimpleNotes.Converters;
 using SimpleNotes.Helpers;
-using SimpleNotes.Models;
+using SimpleNotes.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,17 +20,14 @@ namespace SimpleNotes
 {
     public partial class MainWindow : Window
     {
-        public ObservableCollection<Note> Notes { get; set; } = new ObservableCollection<Note>();
-        public string NotesFolder { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Notes"); // TODO: replace hardcoded value
-
-        private Dictionary<Note, string> hashes = new Dictionary<Note, string>();
+        public NotesManager NotesManager { get; set; } = new NotesManager(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Notes")); // TODO: load from saved settings
         private Note SelectedNote => notesTabControl.SelectedItem as Note;
 
         public MainWindow()
         {
             TrySettingCulture();
             InitializeComponent();
-            LoadNotes();
+            NotesManager.LoadNotes();
         }
 
         private void TrySettingCulture()
@@ -45,74 +42,6 @@ namespace SimpleNotes
             catch (CultureNotFoundException) { } // Stick with default culture if not present on system
         }
 
-        private void LoadNotes()
-        {
-            foreach (string notePath in Directory.EnumerateFiles(NotesFolder, "*.txt", SearchOption.TopDirectoryOnly))
-            {
-                Note note = new Note(Path.GetFileNameWithoutExtension(notePath), File.ReadAllText(notePath, Encoding.UTF8));
-                Notes.Add(note);
-                hashes.Add(note, ComputeHash(note));
-            }
-        }
-
-        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNotes();
-        private void SaveNotes()
-        {
-            hashes.Clear();
-            foreach (Note note in Notes)
-                SaveNote(note);
-        }
-
-        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveCurrentNote();
-        private void SaveNote(Note note)
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(NotePath(note), false, Encoding.UTF8))
-                    writer.Write(note.Text);
-                // saving old note
-                if (hashes.ContainsKey(note))
-                    hashes[note] = ComputeHash(note);
-                // saving new note
-                else
-                    hashes.Add(note, ComputeHash(note));
-            }
-            catch (IOException)
-            {
-                MessageBox.Show($"Could not succesfully save note '{note.Name}'.{Environment.NewLine}Maybe it is used by another program.", "Couldn't save note", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        public string NotePath(Note note) => Path.Combine(NotesFolder, note.Name + ".txt");
-
-        private void SaveCurrentNote()
-        {
-            if (SelectedNote == null) return;
-            SaveNote(SelectedNote);
-        }
-
-        private void DeleteCurrentNote()
-        {
-            if (SelectedNote == null) return;
-            DeleteNote(SelectedNote);
-        }
-
-        private void DeleteNote(Note note)
-        {
-            try
-            {
-                if (File.Exists(NotePath(note)))
-                    File.Delete(NotePath(note));
-                Notes.Remove(note);
-                if (hashes.ContainsKey(note))
-                    hashes.Remove(note);
-            }
-            catch
-            {
-                MessageBox.Show($"Couldn't succesfully delete note '{note.Name}'", "Couldn't save note", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
         private void AddNote()
         {
             TextInputDialog dialog = new TextInputDialog();
@@ -120,9 +49,21 @@ namespace SimpleNotes
             if (dialog.ShowDialog(this) == true)
             {
                 Note note = new Note(dialog.Text);
-                Notes.Add(note);
+                NotesManager.AddNote(note);
                 notesTabControl.SelectedItem = note;
             }
+        }
+
+        private void SaveCurrentNote()
+        {
+            if (SelectedNote == null) return;
+            NotesManager.SaveNote(SelectedNote);
+        }
+
+        private void DeleteCurrentNote()
+        {
+            if (SelectedNote == null) return;
+            NotesManager.DeleteNote(SelectedNote);
         }
 
         private void RenameCurrentNote()
@@ -131,23 +72,7 @@ namespace SimpleNotes
             TextInputDialog dialog = new TextInputDialog(SelectedNote.Name);
             dialog.Submitted += (s, e) => ValidateTitle(e);
             if (dialog.ShowDialog(this) == true)
-            {
-                try
-                {
-
-                    string oldPath = NotePath(SelectedNote);
-                    SelectedNote.Name = dialog.Text;
-                    string newPath = NotePath(SelectedNote);
-                    if (File.Exists(oldPath))
-                        File.Move(oldPath, newPath);
-                    if (hashes.ContainsKey(SelectedNote))
-                        hashes[SelectedNote] = ComputeHash(SelectedNote);
-                }
-                catch
-                {
-                    MessageBox.Show($"Couldn't succesfully rename note '{SelectedNote.Name}'", "Couldn't rename note", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+                SelectedNote.Name = dialog.Text;
         }
 
         private void ValidateTitle(SubmitEventArgs<string> eventArgs)
@@ -155,7 +80,7 @@ namespace SimpleNotes
             eventArgs.Cancel = true;
             if (eventArgs.Value == "")
                 MessageBox.Show("Note name can't be empty", "Invalid name", MessageBoxButton.OK, MessageBoxImage.Information);
-            else if (Notes.Any(n => n.Name == eventArgs.Value))
+            else if (NotesManager.HasNote(eventArgs.Value))
                 MessageBox.Show("A note with this name already exists.", "Invalid name", MessageBoxButton.OK, MessageBoxImage.Information);
             else if (FileUtils.IsInvalidFileName(eventArgs.Value))
                 MessageBox.Show("Note name must be a valid filename.", "Invalid name", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -165,56 +90,20 @@ namespace SimpleNotes
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!IsSaved())
+            if (!NotesManager.AllSaved())
             {
                 MessageBoxResult shouldSave = MessageBox.Show("Do you want to save your changes?", "Save changes?", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (shouldSave == MessageBoxResult.Yes)
-                    SaveNotes();
+                    NotesManager.SaveNotes();
                 else if (shouldSave == MessageBoxResult.Cancel)
                     e.Cancel = true;
             }
         }
 
-        private string ComputeHash(Note note)
-        {
-            HashAlgorithm hasher = MD5.Create();
-            byte[] hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(note.Text + note.Name));
-            return BitConverter.ToString(hash);
-        }
-
-        private bool IsSaved()
-        {
-            if (Notes.Count != hashes.Count)
-                return false;
-            foreach (Note n in Notes)
-            {
-                if (!hashes.ContainsKey(n))
-                    return false;
-                string oldHash = hashes[n];
-                string newHash = ComputeHash(n);
-                if (oldHash != newHash)
-                    return false;
-            }
-            return true;
-        }
-
+        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => NotesManager.SaveNotes();
+        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveCurrentNote();
         private void NewCommandExecuted(object sender, ExecutedRoutedEventArgs e) => AddNote();
         private void DeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e) => DeleteCurrentNote();
         private void RenameCommandExecuted(object sender, ExecutedRoutedEventArgs e) => RenameCurrentNote();
-    }
-
-    public class TitleFormatter : IValueConverter
-    {
-        public Func<Note, bool> IsSavedfFunction { get; set; } = _ => true;
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return $"{((Note)value).Name} {(IsSavedfFunction((Note)value) ? "" : "*")}";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
     }
 }

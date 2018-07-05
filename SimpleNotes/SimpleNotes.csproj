@@ -60,6 +60,8 @@
       <DependentUpon>TextInputDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ThemedControls\TextBox.cs" />
+    <Compile Include="ViewModels\NotesManager.cs" />
+    <Compile Include="ViewModels\Note.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -87,7 +89,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Note.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

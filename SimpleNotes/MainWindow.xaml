@@ -12,7 +12,7 @@
     <Window.Resources>
         <RoutedUICommand x:Key="SaveAllCommand" Text="Save all">
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Ctrl+Shift+S</KeyGesture>
+                <KeyGesture>Shift+Ctrl+S</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="RenameCommand" Text="Rename">
@@ -22,10 +22,9 @@
         </RoutedUICommand>
         <RoutedUICommand x:Key="RemoveCommand" Text="Delete note">
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Shift+Del</KeyGesture>
+                <KeyGesture>Shift+Ctrl+Delete</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
-        <local:TitleFormatter x:Key="TabTitleFormatter" />
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource SaveAllCommand}" Executed="SaveAllCommandExecuted" />
@@ -60,14 +59,11 @@
                 <MenuItem Header="_Add note..." Command="New"/>
             </Menu>
             <TabControl x:Name="notesTabControl"
-                ItemsSource="{Binding Notes, FallbackValue=None}"
+                ItemsSource="{Binding NotesManager.Notes, FallbackValue=---}"
                 Padding="0" BorderThickness="0" TabIndex="0">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <Label TabIndex="1" Content="{Binding Name, FallbackValue=Tab name}" />
-                            <!--<Label Content="" />-->
-                        </StackPanel>
+                        <Label Content="{Binding Name, FallbackValue=Tab name}" />
                     </DataTemplate>
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
