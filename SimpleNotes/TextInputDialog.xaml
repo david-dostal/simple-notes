@@ -18,8 +18,8 @@
         <Label Content="Name your note" HorizontalAlignment="Left" Margin="0,4,4,4" VerticalAlignment="Top" Height="26"/>
         <_:TextBox x:Name="noteNameTbx" Margin="4" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" TabIndex="0"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0" Grid.Row="2" VerticalAlignment="Top">
-            <_:Button x:Name="okBtn" IsDefault="True" Content="OK" Margin="4" Padding="12 0" MinHeight="28" MinWidth="72" Click="okBtn_Click"/>
-            <_:Button IsCancel="True" Content="Cancel" Margin="4" Padding="12 0" MinHeight="28" MinWidth="72"/>
+            <_:Button x:Name="okBtn" IsDefault="True" Content="_OK" Margin="4" Padding="12 0" MinHeight="28" MinWidth="72" Click="okBtn_Click"/>
+            <_:Button IsCancel="True" Content="_Cancel" Margin="4" Padding="12 0" MinHeight="28" MinWidth="72"/>
         </StackPanel>
     </Grid>
 </Window>

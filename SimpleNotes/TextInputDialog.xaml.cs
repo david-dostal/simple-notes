@@ -1,25 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace SimpleNotes
 {
     public partial class TextInputDialog : Window
     {
         public string Text { get => noteNameTbx.Text; set => noteNameTbx.Text = value; }
+        public event EventHandler<SubmitEventArgs<string>> Submitted;
 
         public TextInputDialog() => InitializeComponent();
 
+        public bool ShowDialog(Window owner)
+        {
+            base.Owner = owner;
+            return base.ShowDialog().GetValueOrDefault(false);
+        }
+
         private void okBtn_Click(object sender, RoutedEventArgs e) => DialogResult = true;
+
+        protected virtual bool SubmitUnsuccesfull()
+        {
+            SubmitEventArgs<string> eventArgs = new SubmitEventArgs<string>(Text);
+            Submitted?.Invoke(this, eventArgs);
+            return eventArgs.Cancel;
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (DialogResult.GetValueOrDefault(false) && SubmitUnsuccesfull())
+                e.Cancel = true;
+            base.OnClosing(e);
+        }
+
+        public class SubmitEventArgs<T> : EventArgs
+        {
+            public T Value { get; protected set; }
+            public bool Cancel { get; set; } = false;
+
+            public SubmitEventArgs(T value)
+                => Value = value;
+        }
     }
 }

@@ -1,15 +1,18 @@
-﻿using SimpleNotes.Models;
+﻿using SimpleNotes.Helpers;
+using SimpleNotes.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
+using static SimpleNotes.TextInputDialog;
 
 namespace SimpleNotes
 {
@@ -78,12 +81,25 @@ namespace SimpleNotes
             SaveNote(note);
         }
 
-        private void AddNoteClick(object sender, RoutedEventArgs e)
+        private void AddNote()
         {
             TextInputDialog dialog = new TextInputDialog();
-            dialog.Owner = this;
-            if (dialog.ShowDialog() == true)
+            dialog.Submitted += (s, e) => ValidateTitle(e);
+            if (dialog.ShowDialog(this) == true)
                 Notes.Add(new Note(dialog.Text));
+        }
+
+        private void ValidateTitle(SubmitEventArgs<string> eventArgs)
+        {
+            eventArgs.Cancel = true;
+            if (eventArgs.Value == "")
+                MessageBox.Show("Note name can't be empty", "Invalid name", MessageBoxButton.OK, MessageBoxImage.Information);
+            else if (Notes.Any(n => n.Name == eventArgs.Value))
+                MessageBox.Show("A note with this name already exists.", "Invalid name", MessageBoxButton.OK, MessageBoxImage.Information);
+            else if (FileUtils.IsInvalidFileName(eventArgs.Value))
+                MessageBox.Show("Note name must be a valid filename.", "Invalid name", MessageBoxButton.OK, MessageBoxImage.Information);
+            else
+                eventArgs.Cancel = false;
         }
 
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -120,5 +136,7 @@ namespace SimpleNotes
             }
             return true;
         }
+
+        private void NewCommandExecuted(object sender, ExecutedRoutedEventArgs e) => AddNote();
     }
 }
