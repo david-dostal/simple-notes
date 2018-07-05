@@ -9,7 +9,11 @@ namespace SimpleNotes
         public string Text { get => noteNameTbx.Text; set => noteNameTbx.Text = value; }
         public event EventHandler<SubmitEventArgs<string>> Submitted;
 
-        public TextInputDialog() => InitializeComponent();
+        public TextInputDialog(string text = "")
+        {
+            InitializeComponent();
+            Text = text;
+        }
 
         public bool ShowDialog(Window owner)
         {

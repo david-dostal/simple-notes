@@ -7,22 +7,36 @@
         xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
         mc:Ignorable="d"
         Title="SimpleNotes" Height="400" Width="600" WindowStartupLocation="CenterScreen" MinWidth="222" MinHeight="200"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing"
+        >
     <Window.Resources>
         <RoutedUICommand x:Key="SaveAllCommand" Text="Save all">
             <RoutedUICommand.InputGestures>
                 <KeyGesture>Ctrl+Shift+S</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
+        <RoutedUICommand x:Key="RenameCommand" Text="Rename">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>F2</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="RemoveCommand" Text="Delete note">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Shift+Del</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <local:TitleFormatter x:Key="TabTitleFormatter" />
     </Window.Resources>
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource SaveAllCommand}" Executed="SaveAllCommandExecuted" />
         <CommandBinding Command="Save" Executed="SaveCommandExecuted" />
         <CommandBinding Command="New" Executed="NewCommandExecuted" />
+        <CommandBinding Command="{StaticResource RenameCommand}" Executed="RenameCommandExecuted" />
+        <CommandBinding Command="{StaticResource RemoveCommand}" Executed="DeleteCommandExecuted" />
     </Window.CommandBindings>
     <Grid>
         <DockPanel LastChildFill="True">
-            <Menu MinHeight="24" DockPanel.Dock="Top" FontSize="14">
+            <Menu MinHeight="24" DockPanel.Dock="Top" FontSize="14" TabIndex="1">
                 <Menu.ItemsPanel>
                     <ItemsPanelTemplate>
                         <DockPanel HorizontalAlignment="Left"/>
@@ -36,8 +50,8 @@
                     <MenuItem Header="_Save all" Command="{StaticResource SaveAllCommand}" />
                 </MenuItem>
                 <MenuItem Header="_Edit">
-                    <MenuItem Header="_Rename..." />
-                    <MenuItem Header="_Delete" />
+                    <MenuItem Header="_Rename..." Command="{StaticResource RenameCommand}" />
+                    <MenuItem Command="{StaticResource RemoveCommand}" />
                 </MenuItem>
                 <MenuItem Header="_View">
                     <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" />
@@ -47,10 +61,13 @@
             </Menu>
             <TabControl x:Name="notesTabControl"
                 ItemsSource="{Binding Notes, FallbackValue=None}"
-                Padding="0" BorderThickness="0">
+                Padding="0" BorderThickness="0" TabIndex="0">
                 <TabControl.ItemTemplate>
                     <DataTemplate>
-                        <Label Content="{Binding Name, FallbackValue=Tab name}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Label TabIndex="1" Content="{Binding Name, FallbackValue=Tab name}" />
+                            <!--<Label Content="" />-->
+                        </StackPanel>
                     </DataTemplate>
                 </TabControl.ItemTemplate>
                 <TabControl.ContentTemplate>
@@ -62,7 +79,8 @@
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Auto"
                             FontFamily="Consolas" FontSize="18"
-                            TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}" />
+                            TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}"
+                            TabIndex="0"/>
                     </DataTemplate>
                 </TabControl.ContentTemplate>
             </TabControl>
