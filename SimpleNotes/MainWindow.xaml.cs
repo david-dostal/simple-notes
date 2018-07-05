@@ -60,21 +60,28 @@ namespace SimpleNotes
                 SaveNote(note);
         }
 
-        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveNote();
+        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveCurrentNote();
         private void SaveNote(Note note)
         {
             string path = Path.Combine(NotesFolder, note.Name + ".txt");
-            using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
-                writer.Write(note.Text);
-            // saving old note
-            if (hashes.ContainsKey(note))
-                hashes[note] = ComputeHash(note);
-            // saving new note
-            else
-                hashes.Add(note, ComputeHash(note));
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8))
+                    writer.Write(note.Text);
+                // saving old note
+                if (hashes.ContainsKey(note))
+                    hashes[note] = ComputeHash(note);
+                // saving new note
+                else
+                    hashes.Add(note, ComputeHash(note));
+            }
+            catch (IOException)
+            {
+                MessageBox.Show($"Could not succesfully save note '{note.Name}'.{Environment.NewLine}Maybe it is used by another program.", "Couldn't save note", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void SaveNote()
+        private void SaveCurrentNote()
         {
             if (notesTabControl.SelectedItem == null) return;
             Note note = notesTabControl.SelectedItem as Note;
