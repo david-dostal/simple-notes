@@ -13,6 +13,7 @@ namespace SimpleNotes
         {
             InitializeComponent();
             Text = text;
+            noteNameTbx.GotFocus += (s, e) => noteNameTbx.SelectAll();
         }
 
         public bool ShowDialog(Window owner)
