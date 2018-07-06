@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanToTextWrappingConverter.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
+    <Compile Include="Helpers\StringUtils.cs" />
     <Compile Include="TextInputDialog.xaml.cs">
       <DependentUpon>TextInputDialog.xaml</DependentUpon>
     </Compile>
@@ -114,6 +115,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="todo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,19 +1,14 @@
-﻿using SimpleNotes.Converters;
-using SimpleNotes.Helpers;
+﻿using SimpleNotes.Helpers;
 using SimpleNotes.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using System.Security;
 using System.Threading;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
+using static SimpleNotes.Helpers.StringUtils;
 using static SimpleNotes.TextInputDialog;
 
 namespace SimpleNotes
@@ -56,14 +51,14 @@ namespace SimpleNotes
 
         private void SaveCurrentNote()
         {
-            if (SelectedNote == null) return;
-            NotesManager.SaveNote(SelectedNote);
+            if (SelectedNote != null)
+                NotesManager.SaveNote(SelectedNote);
         }
 
         private void DeleteCurrentNote()
         {
-            if (SelectedNote == null) return;
-            NotesManager.DeleteNote(SelectedNote);
+            if (SelectedNote != null)
+                NotesManager.DeleteNote(SelectedNote);
         }
 
         private void RenameCurrentNote()
@@ -100,10 +95,31 @@ namespace SimpleNotes
             }
         }
 
-        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => NotesManager.SaveNotes();
-        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => SaveCurrentNote();
-        private void NewCommandExecuted(object sender, ExecutedRoutedEventArgs e) => AddNote();
-        private void DeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e) => DeleteCurrentNote();
-        private void RenameCommandExecuted(object sender, ExecutedRoutedEventArgs e) => RenameCurrentNote();
+        private void HandleExceptions(Action action)
+        {
+            try { action(); }
+            catch (UnauthorizedAccessException)
+            { MessageBox.Show($"The application is not authorized to acces a note file.", "Not authorized", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (PathTooLongException)
+            { MessageBox.Show($"The path to a note file is too long.", "Path too long", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (DirectoryNotFoundException)
+            { MessageBox.Show($"The specified directory was not found.", "Directory not found", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (IOException)
+            { MessageBox.Show($"There was a problem writing or reading from a file.{Nl}Maybe the file doesn't exist or is used by another program.", "Could't access file", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (NotSupportedException)
+            { MessageBox.Show($"The required operation is not supported vy your system.", "Operation not supported", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch (SecurityException)
+            { MessageBox.Show($"The required operation couldn't be performed because of insufficient permissions.", "Security error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch(ObjectDisposedException)
+            { MessageBox.Show($"The program tried using a file, which was already closed{Nl}Please try again.", "File already closed", MessageBoxButton.OK, MessageBoxImage.Error); }
+            catch(Exception ex)
+            { MessageBox.Show($"A problem occured while running the requested operation.{Nl}We are sorry for any inconveniences.{Nl}{Nl}Details: {ex.Message}", "An exception occured", MessageBoxButton.OK, MessageBoxImage.Error); }
+        }
+
+        private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(NotesManager.SaveNotes);
+        private void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(SaveCurrentNote);
+        private void NewCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(AddNote);
+        private void DeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(DeleteCurrentNote);
+        private void RenameCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(RenameCurrentNote);
     }
 }

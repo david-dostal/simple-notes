@@ -1,0 +1,11 @@
+﻿# handle possible errors on save etc.
+? change font
+? refactor styles into separete file
+- allow changing folder for notes
+? add option to move folder
+- make resize flicker background light instead of black if possible
+? add support for markdown
+- support other encodings than utf-8
+- add readme
+- add screenshots
+? add support for subfolders/categories
