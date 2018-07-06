@@ -13,7 +13,7 @@ namespace SimpleNotes.ViewModels
     {
         public ObservableCollection<Note> Notes { get; protected set; } = new ObservableCollection<Note>();
         private string directory;
-        public string Directory { get => directory; set { directory = value; OnPropertyChanged(nameof(Directory)); } }
+        public string Directory { get => directory; set { directory = value; ReloadNotes(); OnPropertyChanged(nameof(Directory)); } }
 
         public NotesManager(string directory)
         {
@@ -44,6 +44,12 @@ namespace SimpleNotes.ViewModels
             if (File.Exists(path))
                 FileSystem.DeleteFile(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             Notes.Remove(note);
+        }
+
+        private void ReloadNotes()
+        {
+            Notes.Clear();
+            LoadNotes();
         }
 
         public bool HasNote(string title) => Notes.Any(n => n.Name == title);

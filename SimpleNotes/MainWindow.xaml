@@ -22,7 +22,12 @@
         </RoutedUICommand>
         <RoutedUICommand x:Key="RemoveCommand" Text="Delete note">
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Shift+Ctrl+Delete</KeyGesture>
+                <!--<KeyGesture>Shift+Ctrl+Delete</KeyGesture>-->
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="OpenFolderCommand" Text="Choose folder">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+O</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
     </Window.Resources>
@@ -32,43 +37,39 @@
         <CommandBinding Command="New" Executed="NewCommandExecuted" />
         <CommandBinding Command="{StaticResource RenameCommand}" Executed="RenameCommandExecuted" />
         <CommandBinding Command="{StaticResource RemoveCommand}" Executed="DeleteCommandExecuted" />
+        <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolderCommandExecutes" />
     </Window.CommandBindings>
-    <Grid>
-        <DockPanel LastChildFill="True">
-            <Menu MinHeight="24" DockPanel.Dock="Top" FontSize="14" TabIndex="1">
-                <Menu.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <DockPanel HorizontalAlignment="Left"/>
-                    </ItemsPanelTemplate>
-                </Menu.ItemsPanel>
-                <MenuItem Header="_File">
-                    <MenuItem Command="New" />
-                    <MenuItem Header="_Choose folder..." />
-                    <Separator />
-                    <MenuItem Command="Save" />
-                    <MenuItem Header="_Save all" Command="{StaticResource SaveAllCommand}" />
-                </MenuItem>
-                <MenuItem Header="_Edit">
-                    <MenuItem Header="_Rename..." Command="{StaticResource RenameCommand}" />
-                    <MenuItem Command="{StaticResource RemoveCommand}" />
-                </MenuItem>
-                <MenuItem Header="_View">
-                    <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" />
-                    <MenuItem Header="_Font..." />
-                </MenuItem>
-                <MenuItem Header="_Add note..." Command="New"/>
-            </Menu>
-            <TabControl x:Name="notesTabControl"
+    <DockPanel LastChildFill="True">
+        <Menu MinHeight="24" DockPanel.Dock="Top" FontSize="14" TabIndex="1">
+            <MenuItem Header="_File">
+                <MenuItem Command="New" />
+                <MenuItem Header="_Choose folder..." Command="{StaticResource OpenFolderCommand}" />
+                <MenuItem Header="_Move folder..." />
+                <Separator />
+                <MenuItem Command="Save" />
+                <MenuItem Header="_Save all" Command="{StaticResource SaveAllCommand}" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Rename..." Command="{StaticResource RenameCommand}" />
+                <MenuItem Command="{StaticResource RemoveCommand}" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" />
+                <MenuItem Header="_Font..." />
+            </MenuItem>
+            <MenuItem Header="_Add note..." Command="New"/>
+        </Menu>
+        <TabControl x:Name="notesTabControl"
                 ItemsSource="{Binding NotesManager.Notes, FallbackValue=---}"
                 Padding="0" BorderThickness="0" TabIndex="0">
-                <TabControl.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name, FallbackValue=Tab name}" />
-                    </DataTemplate>
-                </TabControl.ItemTemplate>
-                <TabControl.ContentTemplate>
-                    <DataTemplate>
-                        <_:TextBox
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Name, FallbackValue=Tab name}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <_:TextBox
                             Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=Lorem ipsum dolor sit amet}"
                             Padding="4"
                             AcceptsReturn="True"
@@ -77,9 +78,8 @@
                             FontFamily="Consolas" FontSize="18"
                             TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}"
                             TabIndex="0"/>
-                    </DataTemplate>
-                </TabControl.ContentTemplate>
-            </TabControl>
-        </DockPanel>
-    </Grid>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </DockPanel>
 </Window>

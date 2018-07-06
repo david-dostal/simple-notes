@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using static SimpleNotes.Helpers.StringUtils;
 using static SimpleNotes.TextInputDialog;
+using Ookii.Dialogs.Wpf;
 
 namespace SimpleNotes
 {
@@ -70,6 +71,14 @@ namespace SimpleNotes
                 SelectedNote.Name = dialog.Text;
         }
 
+        private void ChooseFolder()
+        {
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.SelectedPath = FileUtils.AddDirectorySeparator(NotesManager.Directory); // open current folder, not just select its name
+            if (dialog.ShowDialog(this).GetValueOrDefault(false))
+                NotesManager.Directory = dialog.SelectedPath;
+        }
+
         private void ValidateTitle(SubmitEventArgs<string> eventArgs)
         {
             eventArgs.Cancel = true;
@@ -110,9 +119,9 @@ namespace SimpleNotes
             { MessageBox.Show($"The required operation is not supported vy your system.", "Operation not supported", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (SecurityException)
             { MessageBox.Show($"The required operation couldn't be performed because of insufficient permissions.", "Security error", MessageBoxButton.OK, MessageBoxImage.Error); }
-            catch(ObjectDisposedException)
+            catch (ObjectDisposedException)
             { MessageBox.Show($"The program tried using a file, which was already closed{Nl}Please try again.", "File already closed", MessageBoxButton.OK, MessageBoxImage.Error); }
-            catch(Exception ex)
+            catch (Exception ex)
             { MessageBox.Show($"A problem occured while running the requested operation.{Nl}We are sorry for any inconveniences.{Nl}{Nl}Details: {ex.Message}", "An exception occured", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
@@ -121,5 +130,6 @@ namespace SimpleNotes
         private void NewCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(AddNote);
         private void DeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(DeleteCurrentNote);
         private void RenameCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(RenameCurrentNote);
+        private void OpenFolderCommandExecutes(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(ChooseFolder);
     }
 }
