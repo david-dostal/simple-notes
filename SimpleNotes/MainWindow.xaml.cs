@@ -1,5 +1,6 @@
 ﻿using Ookii.Dialogs.Wpf;
 using SimpleNotes.Helpers;
+using SimpleNotes.Properties;
 using SimpleNotes.ViewModels;
 using System;
 using System.Globalization;
@@ -16,11 +17,12 @@ namespace SimpleNotes
 {
     public partial class MainWindow : Window
     {
-        public NotesManager NotesManager { get; set; } = new NotesManager(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Notes")); // TODO: load from saved settings
+        public NotesManager NotesManager { get; set; }
         private Note SelectedNote => notesTabControl.SelectedItem as Note;
 
         public MainWindow()
         {
+            NotesManager = new NotesManager(Settings.Default.NotesFolderPath);
             TrySettingCulture();
             InitializeComponent();
             NotesManager.LoadNotes();
@@ -74,9 +76,10 @@ namespace SimpleNotes
         private void ChooseFolder()
         {
             VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
-            dialog.SelectedPath = FileUtils.AddDirectorySeparator(NotesManager.Directory); // open current folder, not just select its name
+            if (Directory.Exists(NotesManager.NotesFolder))
+                dialog.SelectedPath = FileUtils.AddDirectorySeparator(NotesManager.NotesFolder); // open current folder, not just select its name
             if (dialog.ShowDialog(this).GetValueOrDefault(false))
-                NotesManager.Directory = dialog.SelectedPath;
+                NotesManager.NotesFolder = dialog.SelectedPath;
         }
 
         private void ValidateTitle(SubmitEventArgs<string> eventArgs)
@@ -102,6 +105,8 @@ namespace SimpleNotes
                 else if (shouldSave == MessageBoxResult.Cancel)
                     e.Cancel = true;
             }
+            Settings.Default.NotesFolderPath = NotesManager.NotesFolder;
+            Settings.Default.Save();
         }
 
         private void HandleExceptions(Action action)

@@ -13,7 +13,9 @@ namespace SimpleNotes.Helpers
 
         public static string AddDirectorySeparator(string path)
         {
-            if (path.EndsWith(Path.DirectorySeparatorChar.ToString()) || path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
+            if (path == "")
+                return path;
+            else if (path.EndsWith(Path.DirectorySeparatorChar.ToString()) || path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
                 return path;
             else if (path.Contains(Path.AltDirectorySeparatorChar))
                 return path + Path.AltDirectorySeparatorChar;

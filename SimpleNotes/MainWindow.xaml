@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleNotes"
         xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
+        xmlns:settings="clr-namespace:SimpleNotes.Properties"
         mc:Ignorable="d"
         Title="SimpleNotes" Height="400" Width="600" WindowStartupLocation="CenterScreen" MinWidth="222" MinHeight="200"
         DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing">
@@ -40,7 +41,7 @@
             <MenuItem Header="_File">
                 <MenuItem Command="New" />
                 <MenuItem Header="_Choose folder..." Command="{StaticResource OpenFolderCommand}" />
-                <MenuItem Header="_Move folder..." />
+                <MenuItem Header="_Move folder..." IsEnabled="False" />
                 <Separator />
                 <MenuItem Command="Save" />
                 <MenuItem Header="_Save all" Command="{StaticResource SaveAllCommand}" />
@@ -50,14 +51,14 @@
                 <MenuItem Command="{StaticResource RemoveCommand}" />
             </MenuItem>
             <MenuItem Header="_View">
-                <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" />
-                <MenuItem Header="_Font..." />
+                <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="{Binding Source={x:Static settings:Settings.Default}, Path=WrapLines, Mode=TwoWay}" StaysOpenOnClick="True" />
+                <MenuItem Header="_Font..." IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="_Add note..." Command="New"/>
         </Menu>
         <Grid>
             <TabControl x:Name="notesTabControl"
-                        ItemsSource="{Binding NotesManager.Notes}"
+                        ItemsSource="{Binding NotesManager.Notes, FallbackValue=--}"
                         Padding="0" BorderThickness="0" TabIndex="0">
                 <TabControl.ItemTemplate>
                     <DataTemplate>

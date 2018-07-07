@@ -12,18 +12,23 @@ namespace SimpleNotes.ViewModels
     public class NotesManager : INotifyPropertyChanged
     {
         public ObservableCollection<Note> Notes { get; protected set; } = new ObservableCollection<Note>();
-        private string directory;
-        public string Directory { get => directory; set { directory = value; ReloadNotes(); OnPropertyChanged(nameof(Directory)); } }
 
-        public NotesManager(string directory)
+        private string notesFolder;
+        public string NotesFolder { get => notesFolder; set { notesFolder = value; LoadNotes(); OnPropertyChanged(nameof(NotesFolder)); } }
+
+        public NotesManager(string notesFolder)
         {
-            Directory = directory;
+            NotesFolder = notesFolder;
         }
 
         public void LoadNotes()
         {
-            foreach (string notePath in System.IO.Directory.EnumerateFiles(Directory, "*.txt", SearchOption.TopDirectoryOnly))
-                Notes.Add(Note.FromFile(notePath));
+            if (NotesFolder != "" && Directory.Exists(NotesFolder))
+            {
+                Notes.Clear();
+                foreach (string notePath in Directory.EnumerateFiles(NotesFolder, "*.txt", SearchOption.TopDirectoryOnly))
+                    Notes.Add(Note.FromFile(notePath));
+            }
         }
 
         public void AddNote(Note note) => Notes.Add(note);
@@ -31,25 +36,19 @@ namespace SimpleNotes.ViewModels
         public void SaveNotes()
         {
             foreach (Note note in Notes)
-                note.Save(Directory);
+                note.Save(NotesFolder);
         }
 
-        public void SaveNote(Note note) => note.Save(Directory);
+        public void SaveNote(Note note) => note.Save(NotesFolder);
 
         public void DeleteNote(Note note)
         {
             if (!Notes.Contains(note))
                 throw new ArgumentException("Cannot delete note that doesn't exist.");
-            string path = Path.Combine(Directory, $"{note.Name}.txt");
+            string path = Path.Combine(NotesFolder, $"{note.Name}.txt");
             if (File.Exists(path))
                 FileSystem.DeleteFile(path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             Notes.Remove(note);
-        }
-
-        private void ReloadNotes()
-        {
-            Notes.Clear();
-            LoadNotes();
         }
 
         public bool HasNote(string title) => Notes.Any(n => n.Name == title);
