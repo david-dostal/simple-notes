@@ -1,7 +1,7 @@
 ﻿# handle possible errors on save etc.
 ? allow changing font
 ? refactor styles into separete file
-- allow changing folder for notes
+# allow changing folder for notes
 - save last settings
 ? add option to move folder
 x make resize flicker background light instead of black if possible

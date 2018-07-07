@@ -7,8 +7,7 @@
         xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
         mc:Ignorable="d"
         Title="SimpleNotes" Height="400" Width="600" WindowStartupLocation="CenterScreen" MinWidth="222" MinHeight="200"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing"
-        >
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing">
     <Window.Resources>
         <RoutedUICommand x:Key="SaveAllCommand" Text="Save all">
             <RoutedUICommand.InputGestures>
@@ -21,9 +20,6 @@
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="RemoveCommand" Text="Delete note">
-            <RoutedUICommand.InputGestures>
-                <!--<KeyGesture>Shift+Ctrl+Delete</KeyGesture>-->
-            </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="OpenFolderCommand" Text="Choose folder">
             <RoutedUICommand.InputGestures>
@@ -59,17 +55,18 @@
             </MenuItem>
             <MenuItem Header="_Add note..." Command="New"/>
         </Menu>
-        <TabControl x:Name="notesTabControl"
-                ItemsSource="{Binding NotesManager.Notes, FallbackValue=---}"
-                Padding="0" BorderThickness="0" TabIndex="0">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <Label Content="{Binding Name, FallbackValue=Tab name}" />
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <_:TextBox
+        <Grid>
+            <TabControl x:Name="notesTabControl"
+                        ItemsSource="{Binding NotesManager.Notes}"
+                        Padding="0" BorderThickness="0" TabIndex="0">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name, FallbackValue=Tab name}" />
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <_:TextBox
                             Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=Lorem ipsum dolor sit amet}"
                             Padding="4"
                             AcceptsReturn="True"
@@ -78,8 +75,36 @@
                             FontFamily="Consolas" FontSize="18"
                             TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}"
                             TabIndex="0"/>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+                <TabControl.Style>
+                    <Style TargetType="TabControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding NotesManager.Notes.Count, FallbackValue=0}" Value="0">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Grid Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="notesEmptyTextBlock" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Margin="8">
+                                                    No notes available. Please open a folder.
+                                                    </TextBlock>
+                                                    <_:Button HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                              Margin="8" Padding="8,4"
+                                                              Command="{StaticResource OpenFolderCommand}">
+                                                        _Open folder
+                                                    </_:Button>
+                                                </StackPanel>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.Style>
+            </TabControl>
+        </Grid>
     </DockPanel>
 </Window>
