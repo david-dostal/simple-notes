@@ -1,4 +1,5 @@
-﻿using SimpleNotes.Helpers;
+﻿using Ookii.Dialogs.Wpf;
+using SimpleNotes.Helpers;
 using SimpleNotes.ViewModels;
 using System;
 using System.Globalization;
@@ -10,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Markup;
 using static SimpleNotes.Helpers.StringUtils;
 using static SimpleNotes.TextInputDialog;
-using Ookii.Dialogs.Wpf;
 
 namespace SimpleNotes
 {
