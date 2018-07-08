@@ -1,7 +1,8 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:SimpleNotes.Themes"
-                    xmlns:_="clr-namespace:SimpleNotes.ThemedControls">
-    <Style TargetType="{x:Type _:Button}" BasedOn="{StaticResource {x:Type Button}}" />
-    <Style TargetType="{x:Type _:TextBox}" BasedOn="{StaticResource {x:Type TextBox}}" />
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
+  xmlns:local="clr-namespace:SimpleNotes.Themes">
+  <Style BasedOn="{StaticResource {x:Type Button}}" TargetType="{x:Type _:Button}" />
+  <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="{x:Type _:TextBox}" />
 </ResourceDictionary>

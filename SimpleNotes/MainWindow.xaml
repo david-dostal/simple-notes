@@ -1,111 +1,142 @@
-﻿<Window x:Class="SimpleNotes.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleNotes"
-        xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
-        xmlns:settings="clr-namespace:SimpleNotes.Properties"
-        mc:Ignorable="d"
-        Title="SimpleNotes" Height="400" Width="600" WindowStartupLocation="CenterScreen" MinWidth="222" MinHeight="200"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}" FontSize="14" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Closing="WindowClosing">
-    <Window.Resources>
-        <RoutedUICommand x:Key="SaveAllCommand" Text="Save all">
-            <RoutedUICommand.InputGestures>
-                <KeyGesture>Shift+Ctrl+S</KeyGesture>
-            </RoutedUICommand.InputGestures>
-        </RoutedUICommand>
-        <RoutedUICommand x:Key="RenameCommand" Text="Rename">
-            <RoutedUICommand.InputGestures>
-                <KeyGesture>F2</KeyGesture>
-            </RoutedUICommand.InputGestures>
-        </RoutedUICommand>
-        <RoutedUICommand x:Key="RemoveCommand" Text="Delete note">
-        </RoutedUICommand>
-        <RoutedUICommand x:Key="OpenFolderCommand" Text="Choose folder">
-            <RoutedUICommand.InputGestures>
-                <KeyGesture>Ctrl+O</KeyGesture>
-            </RoutedUICommand.InputGestures>
-        </RoutedUICommand>
-    </Window.Resources>
-    <Window.CommandBindings>
-        <CommandBinding Command="{StaticResource SaveAllCommand}" Executed="SaveAllCommandExecuted" />
-        <CommandBinding Command="Save" Executed="SaveCommandExecuted" />
-        <CommandBinding Command="New" Executed="NewCommandExecuted" />
-        <CommandBinding Command="{StaticResource RenameCommand}" Executed="RenameCommandExecuted" />
-        <CommandBinding Command="{StaticResource RemoveCommand}" Executed="DeleteCommandExecuted" />
-        <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolderCommandExecutes" />
-    </Window.CommandBindings>
-    <DockPanel LastChildFill="True">
-        <Menu MinHeight="24" DockPanel.Dock="Top" FontSize="14" TabIndex="1">
-            <MenuItem Header="_File">
-                <MenuItem Command="New" />
-                <MenuItem Header="_Choose folder..." Command="{StaticResource OpenFolderCommand}" />
-                <MenuItem Header="_Move folder..." IsEnabled="False" />
-                <Separator />
-                <MenuItem Command="Save" />
-                <MenuItem Header="_Save all" Command="{StaticResource SaveAllCommand}" />
-            </MenuItem>
-            <MenuItem Header="_Edit">
-                <MenuItem Header="_Rename..." Command="{StaticResource RenameCommand}" />
-                <MenuItem Command="{StaticResource RemoveCommand}" />
-            </MenuItem>
-            <MenuItem Header="_View">
-                <MenuItem Header="_Wrap lines" x:Name="wrapLinesMenuItem" IsCheckable="True" IsChecked="{Binding Source={x:Static settings:Settings.Default}, Path=WrapLines, Mode=TwoWay}" StaysOpenOnClick="True" />
-                <MenuItem Header="_Font..." IsEnabled="False"/>
-            </MenuItem>
-            <MenuItem Header="_Add note..." Command="New"/>
-        </Menu>
-        <Grid>
-            <TabControl x:Name="notesTabControl"
-                        ItemsSource="{Binding NotesManager.Notes, FallbackValue=--}"
-                        Padding="0" BorderThickness="0" TabIndex="0">
-                <TabControl.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name, FallbackValue=Tab name}" />
-                    </DataTemplate>
-                </TabControl.ItemTemplate>
-                <TabControl.ContentTemplate>
-                    <DataTemplate>
-                        <_:TextBox
-                            Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=Lorem ipsum dolor sit amet}"
-                            Padding="4"
-                            AcceptsReturn="True"
-                            VerticalScrollBarVisibility="Auto"
-                            HorizontalScrollBarVisibility="Auto"
-                            FontFamily="Consolas" FontSize="18"
-                            TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}"
-                            TabIndex="0"/>
-                    </DataTemplate>
-                </TabControl.ContentTemplate>
-                <TabControl.Style>
-                    <Style TargetType="TabControl">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding NotesManager.Notes.Count, FallbackValue=0}" Value="0">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate>
-                                            <Grid Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <TextBlock x:Name="notesEmptyTextBlock" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                               Margin="8">
-                                                    No notes available. Please open a folder.
-                                                    </TextBlock>
-                                                    <_:Button HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                              Margin="8" Padding="8,4"
-                                                              Command="{StaticResource OpenFolderCommand}">
-                                                        _Open folder
-                                                    </_:Button>
-                                                </StackPanel>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TabControl.Style>
-            </TabControl>
-        </Grid>
-    </DockPanel>
+﻿<Window
+  x:Class="SimpleNotes.MainWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:_="clr-namespace:SimpleNotes.ThemedControls"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:SimpleNotes"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:settings="clr-namespace:SimpleNotes.Properties"
+  Title="SimpleNotes"
+  Width="600"
+  Height="400"
+  MinWidth="222"
+  MinHeight="200"
+  Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+  Closing="WindowClosing"
+  DataContext="{Binding RelativeSource={RelativeSource Self}}"
+  FontSize="14"
+  WindowStartupLocation="CenterScreen"
+  mc:Ignorable="d">
+  <Window.Resources>
+    <RoutedUICommand x:Key="SaveAllCommand" Text="Save all">
+      <RoutedUICommand.InputGestures>
+        <KeyGesture>Shift+Ctrl+S</KeyGesture>
+      </RoutedUICommand.InputGestures>
+    </RoutedUICommand>
+    <RoutedUICommand x:Key="RenameCommand" Text="Rename">
+      <RoutedUICommand.InputGestures>
+        <KeyGesture>F2</KeyGesture>
+      </RoutedUICommand.InputGestures>
+    </RoutedUICommand>
+    <RoutedUICommand x:Key="RemoveCommand" Text="Delete note" />
+    <RoutedUICommand x:Key="OpenFolderCommand" Text="Choose folder">
+      <RoutedUICommand.InputGestures>
+        <KeyGesture>Ctrl+O</KeyGesture>
+      </RoutedUICommand.InputGestures>
+    </RoutedUICommand>
+  </Window.Resources>
+  <Window.CommandBindings>
+    <CommandBinding Command="{StaticResource SaveAllCommand}" Executed="SaveAllCommandExecuted" />
+    <CommandBinding Command="Save" Executed="SaveCommandExecuted" />
+    <CommandBinding Command="New" Executed="NewCommandExecuted" />
+    <CommandBinding Command="{StaticResource RenameCommand}" Executed="RenameCommandExecuted" />
+    <CommandBinding Command="{StaticResource RemoveCommand}" Executed="DeleteCommandExecuted" />
+    <CommandBinding Command="{StaticResource OpenFolderCommand}" Executed="OpenFolderCommandExecutes" />
+  </Window.CommandBindings>
+  <DockPanel LastChildFill="True">
+    <Menu
+      MinHeight="24"
+      DockPanel.Dock="Top"
+      FontSize="14"
+      TabIndex="1">
+      <MenuItem Header="_File">
+        <MenuItem Command="New" />
+        <MenuItem Command="{StaticResource OpenFolderCommand}" Header="_Choose folder..." />
+        <MenuItem Header="_Move folder..." IsEnabled="False" />
+        <Separator />
+        <MenuItem Command="Save" />
+        <MenuItem Command="{StaticResource SaveAllCommand}" Header="_Save all" />
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Command="{StaticResource RenameCommand}" Header="_Rename..." />
+        <MenuItem Command="{StaticResource RemoveCommand}" />
+      </MenuItem>
+      <MenuItem Header="_View">
+        <MenuItem
+          x:Name="wrapLinesMenuItem"
+          Header="_Wrap lines"
+          IsCheckable="True"
+          IsChecked="{Binding Source={x:Static settings:Settings.Default}, Path=WrapLines, Mode=TwoWay}"
+          StaysOpenOnClick="True" />
+        <MenuItem Header="_Font..." IsEnabled="False" />
+      </MenuItem>
+      <MenuItem Command="New" Header="_Add note..." />
+    </Menu>
+    <Grid>
+      <TabControl
+        x:Name="notesTabControl"
+        Padding="0"
+        BorderThickness="0"
+        ItemsSource="{Binding NotesManager.Notes, FallbackValue=---}"
+        TabIndex="0">
+        <TabControl.ItemTemplate>
+          <DataTemplate>
+            <Label Content="{Binding Name, FallbackValue=Tab name}" />
+          </DataTemplate>
+        </TabControl.ItemTemplate>
+        <TabControl.ContentTemplate>
+          <DataTemplate>
+            <_:TextBox
+              Padding="4"
+              AcceptsReturn="True"
+              FontFamily="Consolas"
+              FontSize="18"
+              HorizontalScrollBarVisibility="Auto"
+              TabIndex="0"
+              Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=Lorem ipsum dolor sit amet}"
+              TextWrapping="{Binding ElementName=wrapLinesMenuItem, Path=IsChecked, Converter={StaticResource BooleanToTextWrappingConverter}}"
+              VerticalScrollBarVisibility="Auto" />
+          </DataTemplate>
+        </TabControl.ContentTemplate>
+        <TabControl.Style>
+          <Style TargetType="TabControl">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding NotesManager.Notes.Count}" Value="0">
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate>
+                      <Grid
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <TextBlock
+                            x:Name="notesEmptyTextBlock"
+                            Margin="8"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextAlignment="Center">
+                            No notes available. Please open a folder.
+                          </TextBlock>
+                          <_:Button
+                            Margin="8"
+                            Padding="8,4"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{StaticResource OpenFolderCommand}">
+                            _Open folder
+                          </_:Button>
+                        </StackPanel>
+                      </Grid>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TabControl.Style>
+      </TabControl>
+    </Grid>
+  </DockPanel>
 </Window>
