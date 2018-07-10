@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleNotes.Helpers;
+using System;
 using System.ComponentModel;
 using System.Windows;
 
@@ -46,5 +47,8 @@ namespace SimpleNotes
             public SubmitEventArgs(T value)
                 => Value = value;
         }
+
+        protected override void OnSourceInitialized(EventArgs e)
+            => WindowHelper.RemoveIcon(this);
     }
 }

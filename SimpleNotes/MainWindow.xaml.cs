@@ -113,21 +113,21 @@ namespace SimpleNotes
         {
             try { action(); }
             catch (UnauthorizedAccessException)
-            { MessageBox.Show($"The application is not authorized to acces a note file.", "Not authorized", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"The application is not authorized to acces a note file.", "Not authorized", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (PathTooLongException)
-            { MessageBox.Show($"The path to a note file is too long.", "Path too long", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"The path to a note file is too long.", "Path too long", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (DirectoryNotFoundException)
-            { MessageBox.Show($"The specified directory was not found.", "Directory not found", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"The specified directory was not found.", "Directory not found", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (IOException)
-            { MessageBox.Show($"There was a problem writing or reading from a file.{Nl}Maybe the file doesn't exist or is used by another program.", "Could't access file", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"There was a problem writing or reading from a file.{Nl}Maybe the file doesn't exist or is used by another program.", "Could't access file", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (NotSupportedException)
-            { MessageBox.Show($"The required operation is not supported vy your system.", "Operation not supported", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"The required operation is not supported vy your system.", "Operation not supported", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (SecurityException)
-            { MessageBox.Show($"The required operation couldn't be performed because of insufficient permissions.", "Security error", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"The required operation couldn't be performed because of insufficient permissions.", "Security error", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (ObjectDisposedException)
-            { MessageBox.Show($"The program tried using a file, which was already closed{Nl}Please try again.", "File already closed", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"The program tried using a file, which was already closed{Nl}Please try again.", "File already closed", MessageBoxButton.OK, MessageBoxImage.Error); }
             catch (Exception ex)
-            { MessageBox.Show($"A problem occured while running the requested operation.{Nl}We are sorry for any inconveniences.{Nl}{Nl}Details: {ex.Message}", "An exception occured", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { MessageBox.Show(this, $"A problem occured while running the requested operation.{Nl}We are sorry for any inconveniences.{Nl}{Nl}Details: {ex.Message}", "An exception occured", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private void SaveAllCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(NotesManager.SaveNotes);

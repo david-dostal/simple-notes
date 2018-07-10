@@ -1,14 +1,15 @@
 ﻿x make resize flicker background light instead of black if possible
+x add support for subfolders/categories
 # handle possible errors on save etc.
 # allow changing folder for notes
 # save last settings
-- add readme
+# add top border to input dialog buttom container (like save? dialog in notepad.exe)
+# add readme
+# Remove icon from dialog
 - add screenshots
 ? allow changing font
 ? refactor styles into separete file
 ? add option to move folder
 ? add support for markdown
 ? support other encodings than utf-8
-? add support for subfolders/categories
-? Remove icon from dialog
 ? Make MessageBox look nice

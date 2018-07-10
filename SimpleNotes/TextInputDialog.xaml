@@ -12,6 +12,7 @@
   FontSize="14"
   ResizeMode="NoResize"
   SizeToContent="Height"
+  UseLayoutRounding="True"
   WindowStartupLocation="CenterOwner"
   mc:Ignorable="d">
   <StackPanel>
@@ -23,10 +24,10 @@
       <_:TextBox x:Name="noteNameTbx" Margin="4" />
     </StackPanel>
     <StackPanel Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+      <Border BorderBrush="#FFDFDFDF" BorderThickness="0,0,0,1" />
       <StackPanel
-        Margin="8"
+        Margin="8,7,8,8"
         HorizontalAlignment="Right"
-        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         Orientation="Horizontal">
         <_:Button
           x:Name="okBtn"

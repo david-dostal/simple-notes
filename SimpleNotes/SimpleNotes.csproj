@@ -61,6 +61,7 @@
     <Compile Include="Converters\BooleanToTextWrappingConverter.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
+    <Compile Include="Helpers\WindowHelper.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TextInputDialog.xaml.cs">
       <DependentUpon>TextInputDialog.xaml</DependentUpon>
