@@ -6,7 +6,7 @@ x add support for subfolders/categories
 # add top border to input dialog buttom container (like save? dialog in notepad.exe)
 # add readme
 # Remove icon from dialog
-- add screenshots
+# add screenshots
 ? allow changing font
 ? refactor styles into separete file
 ? add option to move folder
