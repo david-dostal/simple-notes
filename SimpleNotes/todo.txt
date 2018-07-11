@@ -7,9 +7,9 @@ x add support for subfolders/categories
 # add readme
 # Remove icon from dialog
 # add screenshots
+# Make MessageBox look nice
 ? allow changing font
 ? refactor styles into separete file
 ? add option to move folder
 ? add support for markdown
 ? support other encodings than utf-8
-? Make MessageBox look nice
