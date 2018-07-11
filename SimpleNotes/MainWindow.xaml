@@ -69,7 +69,7 @@
           IsCheckable="True"
           IsChecked="{Binding Source={x:Static settings:Settings.Default}, Path=WrapLines, Mode=TwoWay}"
           StaysOpenOnClick="True" />
-        <MenuItem Header="_Font..." IsEnabled="False" />
+        <MenuItem Click="ChangeFontClick" Header="_Font..." />
       </MenuItem>
       <MenuItem Command="New" Header="_Add note..." />
     </Menu>
@@ -90,8 +90,10 @@
             <_:TextBox
               Padding="4"
               AcceptsReturn="True"
-              FontFamily="Consolas"
-              FontSize="18"
+              FontFamily="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}, Path=NotesManager.Font.FontFamily, FallbackValue=Consolas}"
+              FontSize="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}, Path=NotesManager.Font.FontSize, FallbackValue=18}"
+              FontStyle="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}, Path=NotesManager.Font.FontStyle, FallbackValue=Normal}"
+              FontWeight="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:MainWindow}}, Path=NotesManager.Font.FontWeight, FallbackValue=Normal}"
               HorizontalScrollBarVisibility="Auto"
               TabIndex="0"
               Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, FallbackValue=Lorem ipsum dolor sit amet}"

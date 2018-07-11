@@ -2,10 +2,11 @@
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Forms;
 
 namespace SimpleNotes.Helpers
 {
-    public static class WindowHelper
+    public static class WindowUtils
     {
         [DllImport("user32.dll")]
         static extern int GetWindowLong(IntPtr hwnd, int index);
@@ -29,7 +30,7 @@ namespace SimpleNotes.Helpers
         const int SWP_FRAMECHANGED = 0x0020;
         const uint WM_SETICON = 0x0080;
 
-        public static void RemoveIcon(Window window)
+        public static void RemoveIcon(this Window window)
         {
             // Get this window's handle
             IntPtr hwnd = new WindowInteropHelper(window).Handle;
@@ -44,6 +45,5 @@ namespace SimpleNotes.Helpers
             SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE |
                   SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
-
     }
 }

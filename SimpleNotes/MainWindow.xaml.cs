@@ -10,8 +10,10 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
+using FontDialog = System.Windows.Forms.FontDialog;
 using static SimpleNotes.Helpers.StringUtils;
 using static SimpleNotes.TextInputDialog;
+using static SimpleNotes.Helpers.WinformsUtils;
 
 namespace SimpleNotes
 {
@@ -95,6 +97,20 @@ namespace SimpleNotes
                 eventArgs.Cancel = false;
         }
 
+        private void ChangeFont()
+        {
+            FontDialog dialog = new FontDialog();
+            dialog.ShowEffects = false;
+            dialog.ShowApply = true;
+            dialog.Apply += (s, e) => NotesManager.Font = dialog.Font.ToWpfFont();
+            dialog.FontMustExist = true;
+
+            if (NotesManager.Font != null)
+                dialog.Font = NotesManager.Font.ToWinformsFont();
+            if (dialog.ShowDialog(this.ToWinformsWindow()) == System.Windows.Forms.DialogResult.OK)
+                NotesManager.Font = dialog.Font.ToWpfFont();
+        }
+
         private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (!NotesManager.AllSaved())
@@ -136,5 +152,7 @@ namespace SimpleNotes
         private void DeleteCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(DeleteCurrentNote);
         private void RenameCommandExecuted(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(RenameCurrentNote);
         private void OpenFolderCommandExecutes(object sender, ExecutedRoutedEventArgs e) => HandleExceptions(ChooseFolder);
+
+        private void ChangeFontClick(object sender, RoutedEventArgs e) => HandleExceptions(ChangeFont);
     }
 }

@@ -43,6 +43,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -64,7 +66,8 @@
     <Compile Include="Converters\BooleanToTextWrappingConverter.cs" />
     <Compile Include="Helpers\FileUtils.cs" />
     <Compile Include="Helpers\StringUtils.cs" />
-    <Compile Include="Helpers\WindowHelper.cs" />
+    <Compile Include="Helpers\WindowUtils.cs" />
+    <Compile Include="Helpers\WinformsUtils.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TextInputDialog.xaml.cs">
       <DependentUpon>TextInputDialog.xaml</DependentUpon>

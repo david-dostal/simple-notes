@@ -49,6 +49,6 @@ namespace SimpleNotes
         }
 
         protected override void OnSourceInitialized(EventArgs e)
-            => WindowHelper.RemoveIcon(this);
+            => this.RemoveIcon();
     }
 }

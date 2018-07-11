@@ -6,6 +6,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using static SimpleNotes.Helpers.WinformsUtils;
+using System.Windows.Media;
+using System.Windows;
 
 namespace SimpleNotes.ViewModels
 {
@@ -13,12 +16,22 @@ namespace SimpleNotes.ViewModels
     {
         public ObservableCollection<Note> Notes { get; protected set; } = new ObservableCollection<Note>();
 
+        private FontInfo font;
+        public FontInfo Font { get => font; set { font = value; OnPropertyChanged(nameof(Font)); } }
+
         private string notesFolder;
         public string NotesFolder { get => notesFolder; set { notesFolder = value; LoadNotes(); OnPropertyChanged(nameof(NotesFolder)); } }
 
         public NotesManager(string notesFolder)
         {
             NotesFolder = notesFolder;
+            Font = new FontInfo()
+            {
+                FontFamily = new FontFamily("Consolas"),
+                FontSize = 18,
+                FontStyle = FontStyles.Normal,
+                FontWeight = FontWeights.Normal
+            };
         }
 
         public void LoadNotes()
